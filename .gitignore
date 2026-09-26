@@ -1,1 +1,9 @@
 *.tsv
+
+# Large/regenerable pipeline artifacts - never commit these, regenerate via
+# src/baseline/pipeline.py instead.
+output/
+.venv/
+__pycache__/
+*.pyc
+*.parquet
