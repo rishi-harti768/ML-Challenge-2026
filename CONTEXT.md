@@ -32,9 +32,13 @@ _Avoid_: classifier (only use when the matching model literally is one), scorer.
 The competition metric: F_0.5 (precision weighted 2x over recall) computed per reference entity, then averaged across all reference entities, singletons included. Distinguishes this from a pooled/micro F_0.5 over all pairs, which the leaderboard does not use.
 _Avoid_: F-score, F1 (this competition never uses F1).
 
-**Held-out validation split**:
-A carved-out slice of the training reference entities (with ground truth) used to self-score F_0.5 before spending a leaderboard submission. Distinct from the test set, which has no ground truth at all.
-_Avoid_: dev set, test split (test set is a different, ungrounded thing in this project).
+**Random holdout**:
+A validation split built by sampling reference entities uniformly at random from the training set, regardless of country. Measures matching quality under the same country mix (US/India) the model trained on — it does not test generalization to an unseen country.
+_Avoid_: held-out validation split (ambiguous between this and country-held-out), dev set.
+
+**Country-held-out validation**:
+A validation split built by training with one training country entirely excluded (e.g. India), then measuring matching quality only on that excluded country's reference entities. Simulates the test set's France shift, since France is likewise absent from training. A large gap between this score and the random holdout score signals the model or blocking is leaning on country-specific patterns rather than generic string similarity.
+_Avoid_: unseen-country split, generalization split.
 
 **Domain shift / unseen country**:
 A country label present in the test set but absent from training (currently: `France`). The pipeline must handle it without country-specific hardcoding, since `country` is an open-set label, not a fixed enum.
